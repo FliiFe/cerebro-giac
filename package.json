@@ -1,10 +1,12 @@
 {
   "name": "cerebro-giac",
   "version": "0.1.0",
+  "repository": "https://github.com/FliiFe/cerebro-giac.git",
+  "author": "Théophile Cailliau (FliiFe)",
+  "license": "MIT",
   "dependencies": {
     "cerebro-tools": "^0.1.8",
-    "cerebro-ui": "^0.0.16",
-    "giac": "^1.23.60547"
+    "cerebro-ui": "^0.0.16"
   },
   "devDependencies": {
     "cerebro-scripts": "0.0.25"
@@ -12,7 +14,10 @@
   "main": "dist/index.js",
   "keywords": [
     "cerebro",
-    "cerebro-plugin"
+    "cerebro-plugin",
+    "giac",
+    "math",
+    "latex"
   ],
   "scripts": {
     "start": "cerebro-scripts start",
