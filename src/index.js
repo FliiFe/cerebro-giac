@@ -7,26 +7,48 @@ const caseval = memoize(Giac.cwrap('caseval', 'string', ['string']));
 const lgiac = input => caseval(`latex(${input})`).slice(1,-1);
 const mathrender = tex => <div id='math-render'>{'\\[' + tex + '\\]'}</div>;
 
+const monospaceStyle = {fontFamily: ['Source Code Pro', 'monospace']};
+
 const parseEval = command => {
-    if(command.match(/^[ \t]*help[ \t]?\(/) || command.match(/^\?\w+/)) {
+    const limit = command.match(/^\s*limite?\((.+)?\)\s*$/)
+        || command.match(/^\s*limite?\((.+)?\)?\s*$/);
+    const int = command.match(/^\s*(?:int|integrate|integrer)?\((.+)?\)\s*$/)
+        || command.match(/^\s*(?:int|integrate|integrer)?\((.+)?\)?\s*$/);
+    if(command.match(/^\s*help\s?\(/) || command.match(/^\?.\w+/)) {
         const result = caseval(command).split('<br>');
         const description = result[0].slice(1).replace(/^.+?<\/b> :/, '');
         const expr = result[1];
         const seealso = result[2];
-        const ex = result[3].split(';');
+        const ex = result[3].slice(0,-1).split(';');
         return (<div>
-            <b style={{fontFamily: ['Source Code Pro', 'monospace']}}>{expr}</b>
+            <b style={monospaceStyle}>{expr}</b>
             <br />
             {description}
             <br />
             <b>See also:</b>
-            <span style={{fontFamily: ['Source Code Pro', 'monospace']}}>{seealso}</span>
+            <span style={monospaceStyle}>{seealso}</span>
             <br />
-            <b>Examples:</b>
-            <div style={{fontFamily: ['Source Code Pro', 'monospace']}}>
+            <div style={monospaceStyle}>
+                { ex.length > 1 && <b>Examples:</b> || '' }
                 {ex.map(e => <div>{e}</div>)}
             </div>
         </div>);
+    } else if(limit && limit[1]) {
+        //TODO: real parser for arguments, not just a split
+        const args = limit[1].split(',');
+        return (<div id='math-render'>
+            {
+                // limit symbol
+                '\\[\\lim_{' + (args[args.length-2] || 'x') + '\\to ' + args[args.length-1] + '}'
+                // expression
+                + lgiac(args.slice(0,-2).join(',')) + ' = ' +
+                // result
+                lgiac(command) + '\\]'
+            }
+        </div>);
+    } else if(false && int && int[1]) {
+        const args = int[1];
+        //TODO: Implement this
     } else {
         return mathrender(lgiac(command));
     }
@@ -45,7 +67,7 @@ export const fn = async ({ term, display }) => {
         title: 'Giac CAS',
         getPreview: () => outcome
     });
-    setTimeout(() => window.MathJax && MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'math-render']), 200);
+    setTimeout(() => window.MathJax && MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'math-render']), 150);
 };
 
 export const keyword = 'giac';
