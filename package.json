@@ -3,6 +3,7 @@
   "version": "0.1.2",
   "repository": "https://github.com/FliiFe/cerebro-giac.git",
   "author": "Théophile Cailliau (FliiFe)",
+  "description": "", 
   "license": "MIT",
   "dependencies": {
     "cerebro-tools": "^0.1.8",
